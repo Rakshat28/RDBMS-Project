@@ -7,6 +7,7 @@ const Login = React.lazy(()=> import("./pages/Login"));
 const Home = React.lazy(()=>import("./pages/Home.jsx"))
 import FourOFour from "./pages/FourOFour.jsx";
 import Header from "./components/Header.jsx"
+import Hospitals from './pages/Hospitals.jsx';
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Login />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/hospitals" element={<Hospitals />} />
             <Route path='*' element ={<FourOFour />} />
           </Routes>
         </Layout>

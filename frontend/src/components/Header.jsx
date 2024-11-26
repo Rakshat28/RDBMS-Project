@@ -35,6 +35,9 @@ const callsToAction = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navigate = useNavigate();
+  const handleHospitalClick = () => {
+    navigate('/hospitals'); // Change this to your desired path for hospitals
+  };
 
   const handleLogout = () =>{
     localStorage.removeItem("authToken");
@@ -95,10 +98,13 @@ export default function Header() {
                       <item.icon aria-hidden="true" className="size-6 text-gray-600 group-hover:text-indigo-600" />
                     </div>
                     <div className="flex-auto">
-                      <a href={item.href} className="block font-semibold text-gray-900">
-                        {item.name}
-                        <span className="absolute inset-0" />
-                      </a>
+                    <button
+                    onClick={handleHospitalClick}
+                    className="block font-semibold text-gray-900"
+                  >
+                    {item.name}
+                    <span className="absolute inset-0" />
+                  </button>
                       <p className="mt-1 text-gray-600">{item.description}</p>
                     </div>
                   </div>
