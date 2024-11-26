@@ -93,4 +93,48 @@ router.get('/home', authenticate, (req, res) => {
     return res.send('Welcome to the home page');
 });
 
+// Add Hospital route
+router.post("/addHospital", authenticate, async (req, res) => {
+    const { name, email, address} = req.body;
+
+    // Validate input
+    if (!name || !email || !address ) {
+        return res.status(400).json({ message: 'All fields (name, email, address, photoUrl) are required' });
+    }
+
+    try {
+        // Check if a hospital with the same email already exists
+        const hospitalExists = await prisma.hospital.findUnique({
+            where: { email: email },
+        });
+
+        if (hospitalExists) {
+            return res.status(400).json({
+                message: 'Hospital with this email already exists',
+            });
+        }
+
+        // Create a new hospital
+        const newHospital = await prisma.hospital.create({
+            data: {
+                name,
+                email,
+                address
+            },
+        });
+
+        // Send response
+        res.status(201).json({
+            message: 'Hospital added successfully',
+            hospital: newHospital,
+        });
+
+    } catch (error) {
+        console.error('Error adding hospital:', error);
+        res.status(500).json({
+            message: 'Error adding hospital',
+        });
+    }
+});
+
 module.exports = router;

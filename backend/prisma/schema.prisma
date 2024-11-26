@@ -74,10 +74,8 @@ model DoctorDetail {
 model Hospital {
   id        Int      @id @default(autoincrement())
   name      String   @unique
+  email     String   @unique
   address   String
-  contact   String
-  capacity  Int
   createdAt DateTime @default(now())
-
   doctors DoctorDetail[]
 }
