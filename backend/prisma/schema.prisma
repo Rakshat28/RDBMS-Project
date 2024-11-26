@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+   id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+
+  patients PatientEntry[]
+  doctors  DoctorEntry[]
+}
+
+model PatientEntry {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String
+  age       Int
+  gender    String
+  address   String
+  phone     String
+  createdAt DateTime @default(now())
+
+  user    User           @relation(fields: [userId], references: [id])
+  records PatientRecord[]
+}
+
+
+model PatientRecord {
+  id         Int      @id @default(autoincrement())
+  patientId  Int
+  doctorId   Int
+  diagnosis  String
+  treatment  String
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  patient PatientEntry @relation(fields: [patientId], references: [id])
+  doctor  DoctorEntry  @relation(fields: [doctorId], references: [id])
+}
+
+model DoctorEntry {
+  id             Int           @id @default(autoincrement())
+  userId         Int           @unique
+  specialization String
+  experience     Int
+  licenseNumber  String        @unique
+  createdAt      DateTime      @default(now())
+
+  user           User          @relation(fields: [userId], references: [id])
+  records        PatientRecord[]
+  doctorDetail   DoctorDetail? // Reverse relation field
+}
+
+model DoctorDetail {
+  id           Int      @id @default(autoincrement())
+  doctorId     Int      @unique
+  hospitalId   Int?
+  availability String
+  ratings      Float    @default(0.0)
+
+  doctor   DoctorEntry @relation(fields: [doctorId], references: [id])
+  hospital Hospital?   @relation(fields: [hospitalId], references: [id])
+}
+
+
+
+model Hospital {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  address   String
+  contact   String
+  capacity  Int
+  createdAt DateTime @default(now())
+
+  doctors DoctorDetail[]
+}
