@@ -1,10 +1,11 @@
 
 import React,{Suspense} from 'react';
 import { BrowserRouter,Routes,Route,useLocation } from 'react-router-dom';
-import LandingPage from "./components/LandingPage.jsx";
-const Signup = React.lazy(() => import("./components/Signup"));
-const Login = React.lazy(()=> import("./components/Login"));
-const Home = React.lazy(()=>import("./components/Home.jsx"))
+import LandingPage from "./pages/LandingPage.jsx";
+const Signup = React.lazy(() => import("./pages/Signup"));
+const Login = React.lazy(()=> import("./pages/Login"));
+const Home = React.lazy(()=>import("./pages/Home.jsx"))
+import FourOFour from "./pages/FourOFour.jsx";
 import Header from "./components/Header.jsx"
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Login />} />
             <Route path="/home" element={<Home />} />
+            <Route path='*' element ={<FourOFour />} />
           </Routes>
         </Layout>
       </Suspense>
@@ -29,12 +31,13 @@ function Layout({ children }) {
   const location = useLocation();
 
   // Hide header on the Landing Page
-  const HidePath= ["/","/signup","/signin"];
-
-
+  const HidePath= ["/","/signup","/signin",'*'];
+  const validRoutes = ["/", "/signup", "/signin", "/home"];
+  const isInvalidRoute = !validRoutes.includes(location.pathname);
+  const shouldHideHeader = HidePath.includes(location.pathname) || isInvalidRoute;
   return (
     <>
-      {!HidePath.includes(location.pathname) && <Header />}
+      {!shouldHideHeader && <Header />}
       {children}
     </>
   );

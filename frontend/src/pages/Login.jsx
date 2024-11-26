@@ -1,54 +1,55 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 
-import React, { useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import Container from "../components/Container"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import React,{useState} from "react"
 
-import Container from "./Container"
+export default function Login() {
 
-export default function Signup() {
-  const [formData,setFormData] = useState({
-    email: '',
-    password: ''
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
   });
   const [error,setError] = useState(false);
+ const [message, setMessage] = useState(""); // For error/success messages
+  const navigate = useNavigate(); // For navigation
 
-  const [message, setMessage] = useState(''); // Added state to handle response messages
-
- const navigate = useNavigate();
-  const handleChange=(e)=>{
-    const {name,value} = e.target;
-    setFormData({...formData , [name]: value});
-  }
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post('/auth/signup', formData);
-      setMessage(response.data.message);
+      const response = await axios.post("http://localhost:5000/api/auth/signin", formData); // Adjust the URL if needed
+      const { token } = response.data;
+
+      // Save token to localStorage (optional)
+      localStorage.setItem("authToken", token);
+      console.log('Token saved:', localStorage.getItem('authToken'));
+
+      setMessage("Login successful!");
       navigate("/home");
-      setError(false);
     } catch (error) {
+      // Handle errors
       setError(true);
-      setMessage(error.response?.data?.message || 'Something went wrong!');
+      if (error.response && error.response.data) {
+        setMessage(error.response.data.message); // Show error message from server
+      } else {
+        setMessage("Something went wrong. Please try again.");
+      }
     }
   };
 
-
     return (
       <>
+        <div className='m-3'>
+        {error?<div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+  <span className="font-medium">Log in failed !</span> Invalid Credentials.
+</div> : null}
+        </div>
         {/*
           This example requires updating your template:
   
@@ -57,13 +58,9 @@ export default function Signup() {
           <body class="h-full">
           ```
         */}
-        <div className='m-3'>
-        {error?<div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-  <span class="font-medium">Sign up failed !</span>
-</div> : null}
-        </div>
         <div className='flex items-center justify-center h-screen'>
             <Container>
+                
                 <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-10 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <div className='flex justify-center'>
@@ -71,7 +68,7 @@ export default function Signup() {
                      </div>
 
                     <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                    Sign up to create account
+                    Log in to your account
                     </h2>
                 </div>
         
@@ -90,7 +87,7 @@ export default function Signup() {
                             autoComplete="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
                         </div>
                     </div>
@@ -98,9 +95,13 @@ export default function Signup() {
                     <div>
                         <div className="flex items-center justify-between">
                         <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                           Set Password
+                            Password
                         </label>
-                        
+                        <div className="text-sm">
+                            <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                            Forgot password?
+                            </a>
+                        </div>
                         </div>
                         <div className="mt-2">
                         <input
@@ -111,7 +112,7 @@ export default function Signup() {
                             autoComplete="current-password"
                             value={formData.password}
                             onChange={handleChange}
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
                         </div>
                     </div>
@@ -121,16 +122,16 @@ export default function Signup() {
                         type="submit"
                         className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                        Sign up
+                        Sign in
                         </button>
                     </div>
                     <div className="flex items-center justify-between">
                         <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                            Already have an account?
+                            Don't have an account?
                         </label>
-                        <div className="text-sm" onClick={(()=>navigate("/signin"))}>
+                        <div className="text-sm" onClick={()=>navigate("/signup")}>
                             <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                            Login
+                            Sign up
                             </a>
                         </div>
                         </div>

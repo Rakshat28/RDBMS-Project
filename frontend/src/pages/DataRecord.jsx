@@ -1,5 +1,5 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid'
-import Container from './Container'
+import Container from '../components/Container'
 
 export default function DataRecord() {
   return (
